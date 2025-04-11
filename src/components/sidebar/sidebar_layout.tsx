@@ -10,9 +10,9 @@ const SidebarLayout = () => {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className={cn('transition-all duration-300 mx-auto flex flex-col overflow-hidden md:flex-row dark:border-neutral-700 dark:bg-neutral-800 h-screen', open ? 'w-64' : 'w-16')}>
+    <div className={cn('transition-all   duration-300 mx-auto flex flex-col overflow-hidden md:flex-row dark:border-neutral-700 dark:bg-neutral-800 h-screen', open ? 'w-64' : 'w-16')}>
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className='justify-between gap-10'>
+        <SidebarBody className='justify-between gap-10 bg-sidebar-primary-foreground'>
           <div className='flex flex-1 flex-col overflow-x-hidden overflow-y-auto hide-scrollbar'>
             {open ? <Logo /> : <LogoIcon />}
             <div className='mt-8 flex flex-col gap-2'>
