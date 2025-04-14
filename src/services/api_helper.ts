@@ -333,9 +333,9 @@ export async function GetAllBookings() {
     }
   }
 
-  export async function GetVendorBookings(vendorId:any) { 
+  export async function GetUserBookings(id:any) { 
     try {
-      const response = await axiosInstance.post('/userbookings',vendorId);
+      const response = await axiosInstance.post('/userbookings',id);
       return response.data;
     } catch (error) {
       throw error;

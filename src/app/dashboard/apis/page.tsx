@@ -1,5 +1,9 @@
 'use client'
 
+import Column from '@/components/layout/column'
+import Container from '@/components/layout/container'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { GetStripeApi, UpdateStripeApi } from '@/services/api_helper'
 import { useEffect, useState } from 'react'
 
@@ -29,13 +33,13 @@ const Apipage = () => {
   }, [])
 
   return (
-    <div className='flex flex-col space-y-6 items-center h-96 justify-center w-full'>
-      <div className='space-x-4 w-full'>
-        <div className='w-full content-center inline'>Payment Api Key :</div>
-        <div className='flex flex-row gap-4 mt-4'>
+    <Column className='h-screen flex flex-col space-y-6 items-center h-96 justify-center w-full'>
+      <Container className='space-x-4 w-1/2 bg-primary-foreground'>
+        <div className='w-full content-center inline'>Stripe Api Key :</div>
+        <Column className=' gap-4 mt-4'>
           <div>
-            <label htmlFor='secretapikey'>Secret_Api_Key</label>
-            <input
+            <label htmlFor='secretapikey'>Secret Key</label>
+            <Input
               id='secretapikey'
               type='text'
               defaultValue={paymentapi?.secretapikey}
@@ -46,8 +50,8 @@ const Apipage = () => {
             />
           </div>
           <div>
-            <label htmlFor='secretapikey'>Publishable_Api_key</label>
-            <input
+            <label htmlFor='secretapikey'>Publishable key</label>
+            <Input
               id='publishableapikey'
               type='text'
               defaultValue={paymentapi?.publishableapikey}
@@ -60,17 +64,12 @@ const Apipage = () => {
               className='border border-gray-300 text-black rounded px-2 py-1 w-full'
             />
           </div>
+        </Column>
+        <div className='py-4'>
+          <Button onClick={UpdatePaymentApi}>Update</Button>
         </div>
-        <div>
-          <button
-            onClick={UpdatePaymentApi}
-            className='bg-blue-500 text-white mt-4 px-3 py-1 rounded'
-          >
-            Update
-          </button>
-        </div>
-      </div>
-    </div>
+      </Container>
+    </Column>
   )
 }
 

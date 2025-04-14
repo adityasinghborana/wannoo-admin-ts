@@ -32,7 +32,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       <Button
         variant="outline"
         type="button"
-        className="bg-orange-500 text-white py-2 px-4 rounded"
+        className="bg-primary text-primary-foreground py-2 px-4 rounded"
         onClick={() => document.getElementById('image-upload')?.click()}
       >
         {buttonLabel}

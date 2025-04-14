@@ -1,11 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import React from "react";
 interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
-    children: React.ReactNode;
+    children?: React.ReactNode;
   }
   const Container: React.FC<ContainerProps> = ({ children, className,  }) => {
   return (
-    <Card className={className}>
+    <Card className={`${className} border-none`}>
       <CardContent >
         {children}
       </CardContent>
