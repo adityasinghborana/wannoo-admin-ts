@@ -1,5 +1,5 @@
 'use client'
-
+export const dynamic = 'force-dynamic';
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
@@ -9,22 +9,17 @@ import Container from '@/components/layout/container'
 import Row from '@/components/layout/row'
 import Column from '@/components/layout/column'
 import ImageUploader from '@/components/thumbnail-uploader'
-import Addtourcontroller from './addtourcontroller'
+import Edittourcontroller from './edittourcontroller'
 import { toast } from 'react-toastify'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Modeldialog from '@/components/model_dialog'
 import Image from 'next/image'
 import AdvanceTextField from '@/components/advanced_text_field'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+import { useEffect, useState } from 'react'
+import { EditTourRequest, EditTourRequestSchema } from './editinterface'
+import { useSearchParams } from 'next/navigation'
 
-import { useEffect } from 'react'
-import { AddTourRequest, AddTourRequestSchema } from './interface'
+
 
 export default function AddTourForm () {
   const {
@@ -32,20 +27,37 @@ export default function AddTourForm () {
     handleImageSelect,
     handleUpload,
     selectedImages,
-    continents,
-    getContinents,
-    getCountries,
-    countries,
-    cities,
-    getCities,
+    getTourDetail,
     getUid
-  } = Addtourcontroller()
-  useEffect(() => {
-    const uid = getUid()
-    setValue('vendoruid', uid)
+  } = Edittourcontroller()
+  const [tourId, setTourId] = useState<number >(0)
+  const searchParams = useSearchParams()
 
-    getContinents()
-  }, [])
+
+
+
+useEffect(() => {
+    const query = searchParams.get('tourId')
+
+    if (query ) {
+        console.log(query );
+      const queryInt = parseInt(query )
+      setTourId(queryInt)
+
+      const uid = getUid()
+      setValue('vendoruid', uid)
+
+      
+    }
+  }, [searchParams])
+  useEffect(() => {
+    if (tourId !== null) {
+      getTourDetail( tourId ).then((res) => {
+        console.log(res);
+        // Populate your form fields here
+      });
+    }
+  }, [tourId]);
   const {
     register,
     control,
@@ -53,8 +65,8 @@ export default function AddTourForm () {
     setValue,
     watch,
     formState: { errors }
-  } = useForm<AddTourRequest>({
-    resolver: zodResolver(AddTourRequestSchema),
+  } = useForm<EditTourRequest>({
+    resolver: zodResolver(EditTourRequestSchema),
     defaultValues: {
       faqs: [{ question: '', answer: '' }]
     }
@@ -65,7 +77,7 @@ export default function AddTourForm () {
     name: 'faqs'
   })
 
-  const onSubmit: SubmitHandler<AddTourRequest> = data => {
+  const onSubmit: SubmitHandler<EditTourRequest> = data => {
     if (!selectedImage) {
       toast.error('Please upload an image before submitting.')
       return
@@ -80,7 +92,6 @@ export default function AddTourForm () {
       ...data
     }
 
-    
     console.log('✅ Submitted Data:', finalData)
   }
 
@@ -99,7 +110,10 @@ export default function AddTourForm () {
     'vendoruid',
     'countryid',
     'cityid',
-    'shortdescription'
+    'shortdescription',
+    'countryname',
+    'cityname',
+    'continent'
   ])
 
   return (
@@ -111,104 +125,9 @@ export default function AddTourForm () {
               onSubmit={handleSubmit(onSubmit, onError)}
               className='space-y-4'
             >
-              {Object.entries(AddTourRequestSchema.shape).map(([key]) => {
+              {Object.entries(EditTourRequestSchema.shape).map(([key]) => {
                 if (excludedFields.has(key)) return null
 
-                //SECTION - Continents
-
-                if (key === 'continent') {
-                  return (
-                    <div key={key}>
-                      <Label htmlFor={key}>{key}</Label>
-                      <Select
-                        onValueChange={value => {
-                          setValue('continent', value)
-                          getCountries(value)
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select Continent' />
-                        </SelectTrigger>
-                        {continents.length > 0 ? (
-                          <SelectContent>
-                            {continents.map(c => (
-                              <SelectItem key={c.id} value={c.name}>
-                                {c.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        ) : (
-                          <p className='text-sm text-gray-500'>
-                            Loading continents...
-                          </p>
-                        )}
-                      </Select>
-                    </div>
-                  )
-                }
-
-                //SECTION - countries
-
-                if (key === 'countryname') {
-                  return (
-                    countries.length > 0 && (
-                      <div key={key}>
-                        <Label htmlFor={key}>{key}</Label>
-                        <Select
-                          onValueChange={value => {
-                            setValue('countryname', value)
-                            getCities(value)
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder='Select Country' />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {countries.map(c => (
-                              <SelectItem key={c.CountryId} value={c.name}>
-                                {c.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )
-                  )
-                }
-
-                //SECTION - Cities
-                if (key === 'cityname') {
-                  return (
-                    cities.length > 0 && (
-                      <div key={key}>
-                        <Label htmlFor={key}>{key}</Label>
-                        <Select
-                          onValueChange={value => {
-                            const selectedCity = cities.find(
-                              c => c.CityName === value
-                            )
-                            if (selectedCity) {
-                              setValue('cityname', selectedCity.CityName) // or value
-                              setValue('countryid', selectedCity.countryId)
-                              setValue('cityid', selectedCity.id)
-                            }
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder='Select City' />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {cities.map(c => (
-                              <SelectItem key={c.id} value={c.CityName}>
-                                {c.CityName}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )
-                  )
-                }
 
                 return (
                   <div key={key}>
@@ -219,12 +138,12 @@ export default function AddTourForm () {
                           ? 'number'
                           : 'text'
                       }
-                      {...register(key as keyof AddTourRequest)}
+                      {...register(key as keyof EditTourRequest)}
                     />
-                    {errors[key as keyof AddTourRequest] && (
+                    {errors[key as keyof EditTourRequest] && (
                       <p className='text-red-500 text-sm'>
                         {errors[
-                          key as keyof AddTourRequest
+                          key as keyof EditTourRequest
                         ]?.message?.toString()}
                       </p>
                     )}

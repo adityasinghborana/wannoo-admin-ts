@@ -5,7 +5,7 @@ export const FaqSchema = z.object({
   answer: z.string()
 })
 
-export const AddTourRequestSchema = z.object({
+export const EditTourRequestSchema = z.object({
   countryid: z.number(),
   continent: z.string(),
   countryname: z.string(),
@@ -30,4 +30,4 @@ export const AddTourRequestSchema = z.object({
   faqs: z.array(FaqSchema)
 })
 
-export type AddTourRequest = z.infer<typeof AddTourRequestSchema>
+export type EditTourRequest = z.infer<typeof EditTourRequestSchema>

@@ -31,7 +31,7 @@ export const useSigninController = () => {
       )
       Cookies.set('uid', user.user.uid, {
         expires: 1,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         path: '/',
 

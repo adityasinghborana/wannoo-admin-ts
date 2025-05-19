@@ -157,6 +157,13 @@ export const links = [
     )
   },
   {
+    label: 'Forms',
+    href: '/dashboard/forms',
+    icon: (
+      <IconForms className='h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200' />
+    )
+  },
+  {
     label: 'Settings',
     href: '/dashboard/settings',
     icon: (
@@ -169,5 +176,6 @@ export const links = [
     icon: (
       <IconArrowLeft className='h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200' />
     )
-  }
+  },
+  
 ]

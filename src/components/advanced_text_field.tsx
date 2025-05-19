@@ -68,7 +68,7 @@ const AdvanceTextField: React.FC<AdvanceTextFieldProps> = ({
 
   return (
     <ReactQuill
-      className={`h-[200px] w-full my-4py-2 px-3 text-ba ${className}`}
+      className={`h-[200px] w-full py-2 px-3 text-black ${className}`}
       theme='snow'
       value={value}
       onChange={onChange}
