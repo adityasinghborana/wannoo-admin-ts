@@ -25,7 +25,7 @@ import {
 
 import { useEffect } from 'react'
 import { AddTourRequest, AddTourRequestSchema } from './interface'
-
+import { AddTour } from '@/services/api_helper'
 export default function AddTourForm () {
   const {
     selectedImage,
@@ -65,7 +65,7 @@ export default function AddTourForm () {
     name: 'faqs'
   })
 
-  const onSubmit: SubmitHandler<AddTourRequest> = data => {
+  const onSubmit: SubmitHandler<AddTourRequest> = async data => {
     if (!selectedImage) {
       toast.error('Please upload an image before submitting.')
       return
@@ -80,8 +80,13 @@ export default function AddTourForm () {
       ...data
     }
 
-    
-    console.log('✅ Submitted Data:', finalData)
+    // TODO add addTour api
+    try{
+      const response = await AddTour(finalData);
+      console.log('Add tour api response',response);
+    }catch(error){
+      console.error('add tour api  error',error);
+    }
   }
 
   const onError = (errors: unknown) => {
