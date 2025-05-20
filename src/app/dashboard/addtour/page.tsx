@@ -83,7 +83,7 @@ export default function AddTourForm () {
     // TODO add addTour api
     try{
       const response = await AddTour(finalData);
-      console.log('Add tour api response',response);
+      console.log('Add tour ',response);
     }catch(error){
       console.error('add tour api  error',error);
     }
