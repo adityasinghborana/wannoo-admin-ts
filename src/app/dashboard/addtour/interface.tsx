@@ -9,12 +9,11 @@ export const AddTourRequestSchema = z.object({
   countryid: z.number(),
   continent: z.string(),
   countryname: z.string(),
-
   cityid: z.number(),
   cityname: z.string(),
   tourname: z.string(),
   duration: z.string(),
-  citytourtypeid: z.string(),
+  category: z.string(),
   citytourtype: z.string(),
   vendoruid: z.string(),
   tourdescription: z.string(),
