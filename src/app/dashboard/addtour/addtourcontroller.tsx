@@ -2,7 +2,8 @@ import {
   fetchCities,
   fetchContinent,
   fetchCountries,
-  UploadBackgroundImage
+  UploadBackgroundImage,
+  GetAllTourTypes
 } from '@/services/api_helper'
 import { useState } from 'react'
 import Cookies from 'js-cookie'
@@ -22,6 +23,11 @@ export type City = {
   CityName: string
   countryId: number
 }
+export type TourType ={
+  id:number
+  cityTourType:string,
+  image:string
+}
 
 function Addtourcontroller () {
   const [selectedImage, setSelectedImage] = useState('')
@@ -29,6 +35,7 @@ function Addtourcontroller () {
   const [continents, setContinents] = useState<Continent[]>([])
   const [countries, setCountries] = useState<Country[]>([])
   const [cities, setCities] = useState<City[]>([])
+  const [tourTypes, setTourTypes] =useState<TourType[]>([])
   const getContinents = async () => {
     try {
       const res = await fetchContinent()
@@ -61,6 +68,16 @@ function Addtourcontroller () {
       toast.error(`Failed to fetch continents: ${error || 'Unknown error'}`)
     }
   }
+
+  const getTourTypes = async () => {
+    try {
+      const res = await GetAllTourTypes()
+      setTourTypes(res)
+    } catch (error) {
+      toast.error(`Failed to fetch tour types: ${error || 'Unknown error'}`)
+    }
+  }
+
 
   const handleUpload = async (files: File[]) => {
     if (files.length === 0) return
@@ -125,7 +142,8 @@ function Addtourcontroller () {
     cities,
     getCities,
     getUid,
-   
+    tourTypes,
+    getTourTypes
   }
 }
 
