@@ -15,7 +15,6 @@ export const useSigninController = () => {
 
   const [signInWithEmailAndPassword, user, loading, firebaseError] =
     useSignInWithEmailAndPassword(auth)
-
   // Listen to firebase login status
   useEffect(() => {
     if (user) {
