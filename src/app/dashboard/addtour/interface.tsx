@@ -13,7 +13,7 @@ export const AddTourRequestSchema = z.object({
   cityname: z.string(),
   tourname: z.string(),
   duration: z.string(),
-  category: z.string(),
+  citytourtypeid: z.string(),
   citytourtype: z.string(),
   vendoruid: z.string(),
   tourdescription: z.string(),

@@ -8,7 +8,8 @@ import { TourController } from './tourcontroller'
 
 const ToursPage = () => {
   const { fetchTours, Tours } = TourController()
-
+  console.log(Tours);
+  console.log(fetchTours);
   useEffect(() => {
     fetchTours()
   }, [])
