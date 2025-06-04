@@ -21,19 +21,55 @@ import {
     CityName: string
     countryId: number
   }
+  export interface TourDetail {
+  countryId?: number;
+  continent?: string;
+  countryname?: string;
+  cityid?: number;
+  cityname?: string;
+  tourName?: string;
+  duration?: string;
+  cityTourTypeId?: string;
+  cityTourType?: string;
+  vendoruid?: string;
+  tourDescription?: string;
+  tourInclusion?: string;
+  tourShortDescription?: string;
+  importantInformation?: string;
+  itenararyDescription?: string;
+  usefulInformation?: string;
+  amount?: string;
+  startTime?: string;
+  googleMapUrl?: string;
+  faqs?: { question: string; answer: string }[];
+  image?: string; // For imagepath
+  tourImages?:string[];
+  imagePath?: string; // For imagepaths
+}
   
   function Edittourcontroller () {
-    const [selectedImage, setSelectedImage] = useState('')
-    const [selectedImages, setSelectedImages] = useState<string[]>([])
+    const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
     
     
     const getUid = () => {
       return Cookies.get('uid') || ''
     }
-   const getTourDetail=async(tourId:number)=> {
-await getTourDetails(tourId)
-
-   }
+   const getTourDetail = async (tourId: number): Promise<TourDetail | null> => {
+    try {
+      const res = await getTourDetails(tourId);
+      if (res) {
+        return res; // Return the tour details
+      } else {
+        toast.error('No tour details found');
+        return null;
+      }
+    } catch (error) {
+      toast.error(`Failed to fetch tour details: ${error || 'Unknown error'}`);
+      return null;
+    }
+  };
   
    
   
@@ -94,7 +130,9 @@ await getTourDetails(tourId)
       handleUpload,
       selectedImages,
       getUid,
-      getTourDetail
+      getTourDetail,
+      setSelectedImage,
+      setSelectedImages
      
     }
   }

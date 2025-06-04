@@ -78,15 +78,19 @@ export default function AddTourForm () {
       toast.error('Please upload an images before submitting.')
       return
     }
+    console.log('Value of data.citytourtypeid before parseInt:',data.citytourtypeid);
+    console.log('Type of data.citytourtypeid before parseInt:', typeof data.citytourtypeid);
     const finalData = {
       imagepath: selectedImage,
       imagepaths: selectedImages,
-      ...data
+      ...data,
+      citytourtypeid:parseInt(data.citytourtypeid,10),
     }
 
     // TODO add addTour api
     console.log("Form Data Submitted:", data);
     console.log("Final Data for API:", finalData);
+    console.log("addtour data",tourTypes)
     try{
       const response = await AddTour(finalData);
       console.log('Add tour api ',response);
@@ -217,28 +221,39 @@ export default function AddTourForm () {
 
                 return (
                   <div key={key}>
-                    <Label htmlFor={key}>{key}</Label>
-                    {key === 'category' ? (
-                      <Select
-                        onValueChange={value => setValue('category', value)} // Updates react-hook-form
-                        value={watch('category')} // Keeps Select in sync with form
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {tourTypes.map(type => (
-                            <SelectItem key={type.id} value={type.cityTourType}>
-                              {type.cityTourType}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <Input
-                        type={key.includes('id') || key === 'amount' ? 'number' : 'text'}
-                        {...register(key as keyof AddTourRequest)}
-                      />
+                    {key === 'citytourtype' ? (
+                      <>
+                        <Label htmlFor={key}>Category</Label>
+                        <Select
+                          onValueChange={(selectedType) => {
+                            const selected = tourTypes.find(t => t.cityTourType === selectedType);
+                            if (selected) {
+                              setValue('citytourtype', selected.cityTourType);
+                              setValue('citytourtypeid', selected.id.toString()); 
+                            }
+                          }}
+                          value={watch('citytourtype')}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {tourTypes.map(type => (
+                              <SelectItem key={type.id} value={type.cityTourType}>
+                                {type.cityTourType}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </>
+                    ) : key === 'citytourtypeid' ? null : ( // Hide the `citytourtypeid` field entirely
+                      <>
+                        <Label htmlFor={key}>{key}</Label>
+                        <Input
+                          type={key.includes('id') || key === 'amount' ? 'number' : 'text'}
+                          {...register(key as keyof AddTourRequest)}
+                        />
+                      </>
                     )}
 
                     {errors[key as keyof AddTourRequest] && (
@@ -246,7 +261,8 @@ export default function AddTourForm () {
                         {errors[key as keyof AddTourRequest]?.message?.toString()}
                       </p>
                     )}
-              </div>
+                  </div>
+
 
                 )
               })}

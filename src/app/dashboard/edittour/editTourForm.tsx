@@ -9,7 +9,7 @@ import Container from '@/components/layout/container'
 import Row from '@/components/layout/row'
 import Column from '@/components/layout/column'
 import ImageUploader from '@/components/thumbnail-uploader'
-import Edittourcontroller from './edittourcontroller'
+import Edittourcontroller, { TourDetail } from './edittourcontroller'
 import { toast } from 'react-toastify'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Modeldialog from '@/components/model_dialog'
@@ -25,14 +25,29 @@ export default function AddTourForm () {
     handleImageSelect,
     handleUpload,
     selectedImages,
+    setSelectedImage,
+    setSelectedImages,
     getTourDetail,
     getUid
   } = Edittourcontroller()
   const [tourId, setTourId] = useState<number >(0)
   const searchParams = useSearchParams()
+  const [tourDetail, setTourDetail] = useState<TourDetail| null>(null)
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors }
+  } = useForm<EditTourRequest>({
+    resolver: zodResolver(EditTourRequestSchema),
+    defaultValues: {
+      faqs: [{ question: '', answer: '' }]
+    }
+  })
 
-
-
+  console.log('Tour Detail:', tourDetail);
 
 useEffect(() => {
     const query = searchParams.get('tourId')
@@ -47,28 +62,38 @@ useEffect(() => {
 
       
     }
-  }, [searchParams])
+  }, [searchParams, setValue, getUid])
   useEffect(() => {
     if (tourId !== null) {
       getTourDetail( tourId ).then((res) => {
-        console.log(res);
-        // Populate your form fields here
+        if(res){
+          setTourDetail(res);
+          setSelectedImages(res.tourImages?.map((img) => img.imagePath) || []);
+          setSelectedImage(res.imagePath || null);
+          setValue('tourname', res.tourName || '');
+          setValue('tourdescription', res.tourDescription || '');
+          setValue('tourinclusion', res.tourInclusion || '');
+          setValue('shortdescription', res.tourShortDescription || '');
+          setValue('importantinformation', res.importantInformation || '');
+          setValue('itenararydescription', res.itenararyDescription || '');
+          setValue('usefulinformation', res.usefulInformation || '');
+          setValue('faqs', res.faqs || [{ question: '', answer: '' }]);
+          setValue('countryid', res.countryId || 0);
+          setValue('cityid', res.cityid || 0);
+          setValue('continent', res.continent || '');
+          setValue('countryname', res.countryname || '');
+          setValue('cityname', res.cityname || '');
+          setValue('duration', res.duration || '');
+          setValue('citytourtypeid', res.cityTourTypeId || '');
+          setValue('citytourtype', res.cityTourType || '');
+          setValue('amount', res.amount || '');
+          setValue('starttime', res.startTime || '');
+          setValue('googlemapurl', res.googleMapUrl || '');
+        }
       });
     }
-  }, [tourId]);
-  const {
-    register,
-    control,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors }
-  } = useForm<EditTourRequest>({
-    resolver: zodResolver(EditTourRequestSchema),
-    defaultValues: {
-      faqs: [{ question: '', answer: '' }]
-    }
-  })
+  }, [tourId, setValue]);
+  
 
   const { fields: faqFields, append: appendFaq } = useFieldArray({
     control,
@@ -262,7 +287,6 @@ useEffect(() => {
           <Column className='px-4 w-1/3 my-6'>
             <Container>
               <Label>Tour Images</Label>
-  
               {selectedImages.length > 0 ? (
                 <div className='mt-4 flex flex-wrap gap-4'>
                   {selectedImages.map((image, index) => (
@@ -270,35 +294,36 @@ useEffect(() => {
                       key={index}
                       src={`${process.env.NEXT_PUBLIC_URL}${image}`}
                       alt={`Selected ${index + 1}`}
-                      width={50}
-                      height={50}
+                      width={100}
+                      height={100}
                       className='rounded-md'
                     />
                   ))}
                 </div>
               ) : (
-                <Modeldialog
-                  onUpload={handleUpload}
-                  label={'Select or upload image '}
-                />
+                <p className="text-sm text-gray-500 mb-2">No images yet.</p>
               )}
+
+              {/* Always show uploader */}
+              <Modeldialog onUpload={handleUpload} label="Upload more images" />
             </Container>
-            <Container className='mt-4'>
-              <Label>Thumbnail</Label>
-              {selectedImage && (
-                <Image
-                  alt='Selected Image'
-                  objectFit='cover'
-                  src={`${process.env.NEXT_PUBLIC_URL}${selectedImage}`}
-                  width={250}
-                  height={150}
-                  className='mt-4 rounded-md'
-                />
-              )}
-              <div className='mt-4'>
-                <ImageUploader onChange={handleImageSelect} />
-              </div>
-            </Container>
+            {/* Thumbnail */}
+              <Container className='mt-4'>
+                <Label>Thumbnail</Label>
+                {selectedImage && (
+                  <Image
+                    alt='Selected Thumbnail'
+                    src={`${process.env.NEXT_PUBLIC_URL}${selectedImage}`}
+                    width={250}
+                    height={150}
+                    className='mt-4 rounded-md object-cover'
+                  />
+                )}
+
+                <div className='mt-4'>
+                  <ImageUploader onChange={handleImageSelect} />
+                </div>
+              </Container>
           </Column>
         </Row>
       </div>
